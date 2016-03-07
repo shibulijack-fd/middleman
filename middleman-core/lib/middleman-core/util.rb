@@ -153,7 +153,7 @@ module Middleman
     def self.url_for(app, path_or_resource, options={})
       # Handle Resources and other things which define their own url method
       url = path_or_resource.respond_to?(:url) ? path_or_resource.url : path_or_resource
-
+      
       begin
         uri = URI(url)
       rescue URI::InvalidURIError
@@ -179,8 +179,15 @@ module Middleman
       elsif this_resource && uri.path
         # Handle relative urls
         url_path = Pathname(uri.path)
-        current_source_dir = Pathname('/' + this_resource.path).dirname
+        puts "Resource path: #{this_resource.path}"
+        current_source_dir_split = this_resource.path.split('/')
+        if current_source_dir_split.length > 1
+          current_source_dir =  Pathname.new('/'+current_source_dir_split[0]+'/')
+        else
+          current_source_dir = Pathname('/' + this_resource.path).dirname    
+        end
         url_path = current_source_dir.join(url_path) if url_path.relative?
+        puts "URL : #{url_path}"
         resource = app.sitemap.find_resource_by_path(url_path.to_s)
         resource_url = resource.url if resource
       elsif options[:find_resource] && uri.path
@@ -195,7 +202,6 @@ module Middleman
           # Output urls relative to the destination path, not the source path
           current_dir = Pathname('/' + this_resource.destination_path).dirname
           relative_path = Pathname(resource_url).relative_path_from(current_dir).to_s
-
           # Put back the trailing slash to avoid unnecessary Apache redirects
           if resource_url.end_with?('/') && !relative_path.end_with?('/')
             relative_path << '/'
