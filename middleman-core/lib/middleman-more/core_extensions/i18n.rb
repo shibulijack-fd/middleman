@@ -179,7 +179,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       replacement = options[:lang_map].fetch(lang, lang)
       options[:path].sub(":locale", replacement.to_s)
     end
-
+  # Changes
+   splitted = path.split('/').reject{|s| s.empty?}
+   splitted.each do |str|
+     path.sub!(str, ::I18n.t("paths.#{str}", :default => str, :fallback => []))
+   end
+  #changes end
     path = ::Middleman::Util.normalize_path(
       File.join(prefix, path.sub(page_id, localized_page_id))
     )
