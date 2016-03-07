@@ -179,7 +179,6 @@ module Middleman
       elsif this_resource && uri.path
         # Handle relative urls
         url_path = Pathname(uri.path)
-        puts "Resource path: #{this_resource.path}"
         current_source_dir_split = this_resource.path.split('/')
         if current_source_dir_split.length > 1
           current_source_dir =  Pathname.new('/'+current_source_dir_split[0]+'/')
@@ -187,7 +186,6 @@ module Middleman
           current_source_dir = Pathname('/' + this_resource.path).dirname    
         end
         url_path = current_source_dir.join(url_path) if url_path.relative?
-        puts "URL : #{url_path}"
         resource = app.sitemap.find_resource_by_path(url_path.to_s)
         resource_url = resource.url if resource
       elsif options[:find_resource] && uri.path
